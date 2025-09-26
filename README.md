@@ -22,16 +22,16 @@ def create_table():
 
     cursor.execute(""" create table if not exists loans (
                    id integer primary key autoincrement,
-                   pr text not null references books(id),
-                   completed integer not null default (0))
+                   pr text not null references readers(pr),
+                   book_id integer not null references boks(id),
+                   date text not null)
     """)
 
-    cursor.execute(""" create table if not exists Appl_Serv (
+    cursor.execute(""" create table if not exists holds (
                    id integer primary key autoincrement,
-                   application_id integer not null references application(id) on delete cascade
-                                                                               on update cascade,
-                   service_id integer not null references service(id) on delete cascade
-                                                                      on update cascade)
+                   pr text not null references readers(pr),
+                   book_id integer not null references books(id),
+                   date text not null)
     """)
 
     connect.commit()
