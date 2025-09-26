@@ -15,3 +15,6 @@ def delete_book():
                    where id = ?
                    if not exists (pr.loans, pr.holds)""", int(input()))
 
+def add_reader(pr, full_name, phone, age):
+    cursor.executemany(""" insert into readers (pr,full_name, phone, age)
+        values (?,?,?)""", pr,full_name, phone, age)
