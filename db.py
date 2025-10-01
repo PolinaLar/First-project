@@ -38,7 +38,7 @@ def create_table():
 
 create_table()
 
-def ganarate_num():
+def generate_nums():
     cursor.execute(" select full_name, phone from readers")
     ans = []
     for row in cursor.fetchall():
@@ -48,5 +48,6 @@ def ganarate_num():
             for elem in ans:
                 file.write(elem)
                 file.write("\n")
+    return ans
 
-ganarate_num()
+generate_nums()
