@@ -40,8 +40,13 @@ create_table()
 
 def ganarate_num():
     cursor.execute(" select full_name, phone from readers")
+    ans = []
     for row in cursor.fetchall():
         name = row[0].split(" ")
-        ans = name[0][0]+name[1][0]+str(len(name[0]))+str(len(name[1]))+row[1][-4:]
+        ans.append(name[0][0]+name[1][0]+str(len(name[0]))+str(len(name[1]))+row[1][-4:])
         with open("README.md", "w", encoding="utf-8") as file:
-            file.write(ans)
+            for elem in ans:
+                file.write(elem)
+                file.write("\n")
+
+ganarate_num()
