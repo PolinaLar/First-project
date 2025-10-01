@@ -27,3 +27,5 @@ def delete_reader(pr):
     cursor.execute(""" delete from readers
                    where pr = ? """, pr)
     connect.commit()
+    
+add_book("Гроза", "Островский", "стихотворение", 1)
