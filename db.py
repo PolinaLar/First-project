@@ -6,9 +6,9 @@ cursor = connect.cursor()
 def create_table():
     cursor.execute(""" create table if not exists readers (
                    pr text primary key,
-                   full_name text not null
-                   phone text not null
-                   ahe integer not null)
+                   full_name text not null,
+                   phone text not null,
+                   age integer not null)
     """)
 
     cursor.execute(""" create table if not exists books (
@@ -23,7 +23,7 @@ def create_table():
     cursor.execute(""" create table if not exists loans (
                    id integer primary key autoincrement,
                    pr text not null references readers(pr),
-                   book_id integer not null references boks(id),
+                   book_id integer not null references books(id),
                    date text not null)
     """)
 
