@@ -18,13 +18,12 @@ def book(pr, title, author):
     if (book_free > 0 and count < 5):
         cursor.execute("""insert into holds (pr,book_id,date)
         values (?,?,?)""", (pr,book_id,date))
-
-    cursor.execute(""" update books
-        set free = ?
-        where id = ?""", (count-1,book_id))
+        
+        cursor.execute(""" update books
+            set free = ?
+            where id = ?""", (book_free-1,book_id))
     
     connect.commit()
-print(datetime.now().strftime("%d/%m/%y"))
 #book("ПЛ691122", "Евгений Онегин", "Пушкин")
 
 
@@ -40,9 +39,46 @@ def delete_hold(pr, title, author):
     """, (pr,book_id))
     
     cursor.execute(""" update books
-        set free = ?
-        where id = ?""", (book_free+1,book_id))
+        set free = free + 1
+        where id = ?""", (book_id,))
     
     connect.commit()
 
 #delete_hold("ПЛ691122", "Евгений Онегин", "Пушкин")
+
+def loans(pr, title, author):
+    cursor.execute("""select * from books
+                   where title = ? and author = ?""",(title, author))
+    
+    book = cursor.fetchone()
+    book_id = book[0]
+    book_free = book[5]
+
+    cursor.execute("""select count(*) from loans
+                   where pr == ?
+                   group by pr""",(pr,))
+    
+    cur = cursor.fetchone()
+    if (cur):
+        count = cur[0]
+    else:
+        count = 0
+    if (book_free > 0 and count < 5):
+        cursor.execute(""" update books
+        set free = free - 1
+        where id = ?""", (book_id,))
+
+        cursor.execute("""select title, author, book_id from books
+                    join holds on holds.book_id = books.id
+                    where pr == ?""",(pr,))
+        for hold in cursor.fetchall():
+            if (hold[0] == title and hold[1] == author):
+                cursor.execute("""delete from holds
+                    where book_id = ? and pr = ?""", (hold[2], pr))
+                break
+        cursor.execute("""insert into loans (pr,book_id,date)
+            values (?,?,?)""", (pr,book_id,datetime.now().strftime("%d/%m/%y")))
+    
+    connect.commit()
+
+loans("ЮА470011", "Гроза", "Островский")
