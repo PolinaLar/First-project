@@ -6,7 +6,7 @@ cursor = connect.cursor()
 def add_book(title, author, genre, n=1): #Работает!)
     cursor.execute("""select * from books
                    where title = ? and author = ?""", (title, author)) #выбираю из books ту, которую задали
-    if cursor.fetchone(): #если такая есть, то update
+    if cursor.fetchone():#если такая есть, то update
         cursor.execute("""update books
                     set total = total + ?, free = free + ?
                     where title = ? and author = ?""", (n, n, title, author))
@@ -15,20 +15,20 @@ def add_book(title, author, genre, n=1): #Работает!)
                     values (?,?,?,?,?)""", (title, author, genre, n, n))
     connect.commit()
 
-#add_book("Гроза", "Островский", "комедия", 1)
+#add_book("Грозfwа", "Островский", "комедия", 1)
     
 def delete_book(title, author): #тут точно также #Работает!)
-    cursor.execute("""select total, free, id from books
+    cursor.execute("""select total, free from books
                    where title = ? and author = ?""", (title, author))
     row = cursor.fetchone()
-    total, free, id = row[0], row[1], row[2]
-    print(total, free, id)
-    cursor.execute("""select * from holds
-                    join books on holds.book_id = books.id
-                    where title = ? and author = ?""", (title, author))
-    if (total == free and cursor.fetchone() == None): #первое условие на loan (если все свободные, значит никто не взял), второе на hold
-        cursor.execute(""" delete from books
+    if (row):
+        total, free = row[0], row[1]
+        cursor.execute("""select * from holds
+                        join books on holds.book_id = books.id
                         where title = ? and author = ?""", (title, author))
+        if (total == free and cursor.fetchone() == None): #первое условие на loan (если все свободные, значит никто не взял), второе на hold
+            cursor.execute(""" delete from books
+                            where title = ? and author = ?""", (title, author))
     else:
         print("Сорян, но книгу нельзя удалить :(") #это не просили, я сделала чисто для проверки
     connect.commit()
@@ -46,7 +46,7 @@ def add_reader(full_name, phone, age): #Работает!)
         values (?,?,?,?)""", (generate_num(full_name, phone), full_name, phone, age))
     connect.commit()
 
-add_reader("Вася Васильев", "89990122200", 72)
+#add_reader("Вася Васильев", "89990122200", 72)
 
 def delete_reader(pr): #Работает!))
     cursor.execute("""select * from holds
