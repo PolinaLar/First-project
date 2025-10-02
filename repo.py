@@ -6,7 +6,7 @@ cursor = connect.cursor()
 def add_book(title, author, genre, n=1): #Работает!)
     cursor.execute("""select * from books
                    where title = ? and author = ?""", (title, author)) #выбираю из books ту, которую задали
-    if cursor.fetchone():#если такая есть, то update
+    if cursor.fetchone(): #если такая есть, то update
         cursor.execute("""update books
                     set total = total + ?, free = free + ?
                     where title = ? and author = ?""", (n, n, title, author))
