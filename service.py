@@ -95,5 +95,7 @@ def return_book(pr, title, author):
 
 def taken_books(pr):
     cursor.execute("""select title, author, date_loan, date_return from loans
-    where pr = ?""", (pr))
+    where pr = ?""", (pr,))
     return cursor.fetchall()
+
+print(taken_books("ЮА470011"))
