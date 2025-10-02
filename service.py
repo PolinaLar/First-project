@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 
 connect = sqlite3.connect("project.db")
@@ -89,12 +89,25 @@ def return_book(pr, title, author):
     cursor.execute("""delete from loans
         where book_id = ? and pr = ?""", (row[0], pr))
     cursor.execute("""update books
-        set free += 1
+        set free = free + 1
         where book_id = ?""", (row[0]))
     connect.commit()
 
 
 def held_books(pr):
-    cursor.execute("""select title, author, date_hold, expires_at from holds
-    where pr = ?""", (pr))
-    return cursor.fetchall()
+    one = []
+    ans = []
+    cursor.execute("""select title, author, holds.date from books
+                   join holds on books.id = holds.book_id
+    where pr = ?""", (pr,))
+    loans = cursor.fetchall()
+    for loan in loans:
+        one.append(loan[0])
+        one.append(loan[1])
+        one.append(loan[2])
+        date = (datetime.strptime(loan[2], "%d/%m/%y") + timedelta(days=5)).strftime("%d/%m/%y")
+        one.append(date)
+        ans.append(one)
+        one = []
+    return ans
+#print(held_books("ЮА470011"))
