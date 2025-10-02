@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 
 connect = sqlite3.connect("project.db")
@@ -94,8 +94,19 @@ def return_book(pr, title, author):
     connect.commit()
 
 def taken_books(pr):
-    cursor.execute("""select title, author, date_loan, date_return from loans
+    one = []
+    ans = []
+    cursor.execute("""select title, author, loans.date from books
+                   join loans on books.id = loans.book_id
     where pr = ?""", (pr,))
-    return cursor.fetchall()
-
+    helds = cursor.fetchall()
+    for hold in helds:
+        one.append(hold[0])
+        one.append(hold[1])
+        one.append(hold[2])
+        date = (datetime.strptime(hold[2], "%d/%m/%y") + timedelta(days=14)).strftime("%d/%m/%y")
+        one.append(date)
+        ans.append(one)
+        one = []
+    return ans
 print(taken_books("ЮА470011"))
