@@ -80,27 +80,4 @@ def loans(pr, title, author):
             values (?,?,?)""", (pr,book_id,datetime.now().strftime("%d/%m/%y")))
     
     connect.commit()
-def return_book(pr, title, author):
-    cursor.execute("""select book_id from books
-    where title = ? and author = ?""", (title, author))
-    row = cursor.fetchone()
-    cursor.execute("""delete from loans
-    where book_id = ? and pr = ?""", (row[0], pr))
-    cursor.execute("""update books
-    set free += 1
-    where book_id = ?""", (row[0]))
-    connect.commit()
-
-def taken_books(pr):
-    cursor.execute("""select title, author, date_loan, date_return from loans
-    where pr = ?""", (pr))
-    return cursor.fetchall()
-    connect.commit()
-
-def held_books(pr):
-    cursor.execute("""select title, author, date_hold, expires_at from holds
-    where pr = ?""", (pr))
-    return cursor.fetchall()
-    connect.commit()
-
-loans("ЮА470011", "Гроза", "Островский")
+#loans("ЮА470011", "Гроза", "Островский")
