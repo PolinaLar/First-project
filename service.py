@@ -92,3 +92,8 @@ def return_book(pr, title, author):
         set free += 1
         where book_id = ?""", (row[0]))
     connect.commit()
+
+def taken_books(pr):
+    cursor.execute("""select title, author, date_loan, date_return from loans
+    where pr = ?""", (pr))
+    return cursor.fetchall()
