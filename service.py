@@ -81,3 +81,14 @@ def loans(pr, title, author):
     
     connect.commit()
 #loans("ЮА470011", "Гроза", "Островский")
+
+def return_book(pr, title, author):
+    cursor.execute("""select book_id from books
+        where title = ? and author = ?""", (title, author))
+    row = cursor.fetchone()
+    cursor.execute("""delete from loans
+        where book_id = ? and pr = ?""", (row[0], pr))
+    cursor.execute("""update books
+        set free += 1
+        where book_id = ?""", (row[0]))
+    connect.commit()
